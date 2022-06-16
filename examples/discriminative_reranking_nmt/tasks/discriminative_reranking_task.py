@@ -441,7 +441,7 @@ class DiscriminativeRerankingNMTTask(FairseqTask):
             return
 
         def sum_logs(key):
-            return sum(log.get(key, 0) for log in logging_outputs)
+            return sum(log.cpu().get(key, 0) for log in logging_outputs)
 
         if self.cfg.target_metric == "bleu":
             counts, totals = [], []
