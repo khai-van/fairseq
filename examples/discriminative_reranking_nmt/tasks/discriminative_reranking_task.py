@@ -449,6 +449,7 @@ class DiscriminativeRerankingNMTTask(FairseqTask):
                 counts.append(sum_logs("_bleu_counts_" + str(i)))
                 totals.append(sum_logs("_bleu_totals_" + str(i)))
 
+
             if max(totals) > 0:
                 # log counts as numpy arrays -- log_scalar will sum them correctly
                 metrics.log_scalar("_bleu_counts", np.array(counts))
