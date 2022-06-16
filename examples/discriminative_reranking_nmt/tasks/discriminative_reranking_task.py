@@ -441,7 +441,7 @@ class DiscriminativeRerankingNMTTask(FairseqTask):
             return
 
         def sum_logs(key):
-            return sum(log.get(key, 0) for log in logging_outputs)
+            return sum(log.get(key, 0).cpu() for log in logging_outputs)
 
         if self.cfg.target_metric == "bleu":
             counts, totals = [], []
@@ -452,8 +452,8 @@ class DiscriminativeRerankingNMTTask(FairseqTask):
 
             if max(totals) > 0:
                 # log counts as numpy arrays -- log_scalar will sum them correctly
-                metrics.log_scalar("_bleu_counts", np.array(counts))
-                metrics.log_scalar("_bleu_totals", np.array(totals))
+                metrics.log_scalar("_bleu_counts", np.array(counts.cpu()))
+                metrics.log_scalar("_bleu_totals", np.array(totals.cpu()))
                 metrics.log_scalar("_bleu_sys_len", sum_logs("_bleu_sys_len"))
                 metrics.log_scalar("_bleu_ref_len", sum_logs("_bleu_ref_len"))
 
