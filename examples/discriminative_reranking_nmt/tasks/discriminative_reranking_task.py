@@ -458,7 +458,7 @@ class DiscriminativeRerankingNMTTask(FairseqTask):
                     import inspect
                     import sacrebleu
 
-                    fn_sig = inspect.getfullargspec(sacrebleu.compute_bleu)[0]
+                    fn_sig = inspect.getfullargspec(sacrebleu.BLEU.compute_bleu)[0]
                     if "smooth_method" in fn_sig:
                         smooth = {"smooth_method": "exp"}
                     else:
