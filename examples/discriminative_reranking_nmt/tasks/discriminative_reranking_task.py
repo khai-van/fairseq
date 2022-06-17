@@ -444,8 +444,15 @@ class DiscriminativeRerankingNMTTask(FairseqTask):
         if self.cfg.target_metric == "bleu":
             counts, totals = [], []
             for i in range(EVAL_BLEU_ORDER):
-                counts.append(sum_logs("_bleu_counts_" + str(i)).cpu())
-                totals.append(sum_logs("_bleu_totals_" + str(i)).cpu())
+                m = sum_logs("_bleu_counts_" + str(i))
+                if isinstance(m, torch.Tensor):
+                    m = m.cpu()
+                counts.append(m)
+
+                n = sum_logs("_bleu_counts_" + str(i))
+                if isinstance(m, torch.Tensor):
+                    n = n.cpu()
+                totals.append(n)
 
             if max(totals) > 0:
                 # log counts as numpy arrays -- log_scalar will sum them correctly
