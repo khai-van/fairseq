@@ -452,8 +452,8 @@ class DiscriminativeRerankingNMTTask(FairseqTask):
 
             if max(totals) > 0:
                 # log counts as numpy arrays -- log_scalar will sum them correctly
-                metrics.log_scalar("_bleu_counts", np.array(counts))
-                metrics.log_scalar("_bleu_totals", np.array(totals))
+                metrics.log_scalar("_bleu_counts", sum(counts))
+                metrics.log_scalar("_bleu_totals", sum(totals))
                 metrics.log_scalar("_bleu_sys_len", sum_logs("_bleu_sys_len"))
                 metrics.log_scalar("_bleu_ref_len", sum_logs("_bleu_ref_len"))
 
