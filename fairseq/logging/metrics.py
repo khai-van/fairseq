@@ -110,7 +110,7 @@ def get_active_aggregators() -> List[MetersDict]:
 
 def log_scalar(
         key: str,
-        value,
+        value: float,
         weight: float = 1,
         priority: int = 10,
         round: Optional[int] = None,
