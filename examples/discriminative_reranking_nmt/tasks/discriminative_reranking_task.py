@@ -444,13 +444,13 @@ class DiscriminativeRerankingNMTTask(FairseqTask):
         if self.cfg.target_metric == "bleu":
             counts, totals = [], []
             for i in range(EVAL_BLEU_ORDER):
-                counts.append(sum_logs("_bleu_counts_" + str(i)))
-                totals.append(sum_logs("_bleu_totals_" + str(i)))
+                counts.append(sum_logs("_bleu_counts_" + str(i)).cpu())
+                totals.append(sum_logs("_bleu_totals_" + str(i)).cpu())
 
             if max(totals) > 0:
                 # log counts as numpy arrays -- log_scalar will sum them correctly
-                metrics.log_scalar("_bleu_counts", sum(counts))
-                metrics.log_scalar("_bleu_totals", sum(totals))
+                metrics.log_scalar("_bleu_counts", np.array(counts))
+                metrics.log_scalar("_bleu_totals", np.array(totals))
                 metrics.log_scalar("_bleu_sys_len", sum_logs("_bleu_sys_len"))
                 metrics.log_scalar("_bleu_ref_len", sum_logs("_bleu_ref_len"))
 
