@@ -129,12 +129,16 @@ class GeneratorHubInterface(nn.Module):
         if isinstance(sentences, str):
             return self.sample([sentences], beam=beam, verbose=verbose, **kwargs)[0]
         tokenized_sentences = [self.encode(sentence) for sentence in sentences]
-        print("encode: ",tokenized_sentences)
         batched_hypos = self.generate(tokenized_sentences, beam, verbose, **kwargs)
-        print("batched_hypos: ",batched_hypos)
-        print("batched_hypos: ",len(batched_hypos[0]))
 
-        return [self.decode(hypos[0]["tokens"]) for hypos in batched_hypos]
+        res = []
+        for hypos in batched_hypos:
+            if hypos[0]["history"] is not None:
+               res.append([self.decode(item["token"]) for token in hypos[0]["history"]])
+            else:
+                res.append(self.decode(hypos[0]["tokens"]))
+
+        return res
 
     def score(
         self, sentences: List[str], replace_newline_with_eos: bool = False, **kwargs
