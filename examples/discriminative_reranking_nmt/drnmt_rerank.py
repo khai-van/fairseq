@@ -81,7 +81,8 @@ def make_batches(args, src, hyp, task, max_positions, encode_fn):
         task.src_dict.encode_line(encode_fn(h), add_if_not_exist=False).long()
         for h in hyp
     ]
-    print("task", task)
+    print(hyp_encode)
+    print("task", task.cfg.include_src)
     if task.cfg.include_src:
         src_encode = [
             task.src_dict.encode_line(
