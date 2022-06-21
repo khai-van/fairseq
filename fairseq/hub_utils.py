@@ -74,7 +74,7 @@ def from_pretrained(
         [os.path.join(model_path, cpt) for cpt in checkpoint_file.split(os.pathsep)],
         arg_overrides=kwargs,
     )
-
+    print(models)
     return {
         "args": args,
         "task": task,
