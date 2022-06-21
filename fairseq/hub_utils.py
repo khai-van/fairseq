@@ -132,6 +132,7 @@ class GeneratorHubInterface(nn.Module):
         batched_hypos = self.generate(tokenized_sentences, beam, verbose, **kwargs)
 
         res = []
+        print(batched_hypos)
         for hypos in batched_hypos:
             if hypos[0]["history"] is not None:
                res.append([(self.decode(item["tokens"]), item["score"]) for item in hypos[0]["history"]])
