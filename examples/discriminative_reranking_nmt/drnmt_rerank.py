@@ -81,6 +81,7 @@ def make_batches(args, src, hyp, task, max_positions, encode_fn):
         task.source_dictionary.encode_line(encode_fn(h), add_if_not_exist=False).long()
         for h in hyp
     ]
+    print("task", task)
     if task.cfg.include_src:
         src_encode = [
             task.source_dictionary.encode_line(
@@ -93,7 +94,7 @@ def make_batches(args, src, hyp, task, max_positions, encode_fn):
     else:
         tokens = [(h,) for h in hyp_encode]
         lengths = [(h.numel(),) for h in hyp_encode]
-
+    print("token",tokens)
     itr = task.get_batch_iterator(
         dataset=task.build_dataset_for_inference(tokens, lengths),
         max_tokens=args.max_tokens,
