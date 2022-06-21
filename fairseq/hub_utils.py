@@ -135,7 +135,7 @@ class GeneratorHubInterface(nn.Module):
         print(batched_hypos)
         for hypos in batched_hypos:
             if hypos[0]["history"] is not None:
-               res.append([(self.decode(item["tokens"]), item["score"]) for item in hypos[0]["history"]])
+               res.append([(self.decode(item["tokens"]), hypos[0]["score"].cpu()) for item in hypos[0]["history"]])
             else:
                 res.append(self.decode(hypos[0]["tokens"]))
 
