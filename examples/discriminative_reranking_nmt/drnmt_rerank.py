@@ -78,13 +78,13 @@ def make_batches(args, src, hyp, task, max_positions, encode_fn):
         hyp
     ), f"Expect {len(src) * args.beam} hypotheses for {len(src)} source sentences with beam size {args.beam}. Got {len(hyp)} hypotheses intead."
     hyp_encode = [
-        task.source_dictionary.encode_line(encode_fn(h), add_if_not_exist=False).long()
+        task.src_dict.encode_line(encode_fn(h), add_if_not_exist=False).long()
         for h in hyp
     ]
     print("task", task)
     if task.cfg.include_src:
         src_encode = [
-            task.source_dictionary.encode_line(
+            task.src_dict.encode_line(
                 encode_fn(s), add_if_not_exist=False
             ).long()
             for s in src
