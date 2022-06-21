@@ -132,7 +132,7 @@ class GeneratorHubInterface(nn.Module):
         print("encode: ",tokenized_sentences)
         batched_hypos = self.generate(tokenized_sentences, beam, verbose, **kwargs)
         print("batched_hypos: ",batched_hypos)
-        print("batched_hypos: ",len(batched_hypos))
+        print("batched_hypos: ",len(batched_hypos[0]))
 
         return [self.decode(hypos[0]["tokens"]) for hypos in batched_hypos]
 
