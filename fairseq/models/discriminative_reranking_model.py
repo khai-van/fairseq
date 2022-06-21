@@ -50,8 +50,8 @@ class BaseRanker(nn.Module):
     def __init__(self, args, task):
         super().__init__()
 
-        self.separator_token = task.dictionary.eos()
-        self.padding_idx = task.dictionary.pad()
+        self.separator_token = task.tgt_dict.eos()
+        self.padding_idx = task.tgt_dict.pad()
 
     def forward(self, src_tokens):
         raise NotImplementedError
@@ -112,12 +112,12 @@ class BertRanker(BaseRanker):
             in_state_dict = x["models"][0].state_dict()
             init_args = x["args"].model
 
-            num_positional_emb = init_args.max_positions + task.dictionary.pad() + 1
+            num_positional_emb = init_args.max_positions + task.tgt_dict.pad() + 1
 
             # follow the setup in roberta
             self.model = TransformerSentenceEncoder(
-                padding_idx=task.dictionary.pad(),
-                vocab_size=len(task.dictionary),
+                padding_idx=task.tgt_dict.pad(),
+                vocab_size=len(task.tgt_dict),
                 num_encoder_layers=getattr(
                     args, "encoder_layers", init_args.encoder_layers
                 ),
@@ -164,8 +164,8 @@ class BertRanker(BaseRanker):
                 )
         else:
             self.model = TransformerSentenceEncoder(
-                padding_idx=task.dictionary.pad(),
-                vocab_size=len(task.dictionary),
+                padding_idx=task.tgt_dict.pad(),
+                vocab_size=len(task.tgt_dict),
                 num_encoder_layers=args.encoder_layers,
                 embedding_dim=args.embed_dim,
                 ffn_embedding_dim=args.ffn_embed_dim,
