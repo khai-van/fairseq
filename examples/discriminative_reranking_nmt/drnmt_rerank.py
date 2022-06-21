@@ -166,7 +166,7 @@ def decode_rerank_scores(args):
         for id, sc in zip(batch.ids.tolist(), scores.tolist()):
             model_scores[id] = sc[0]
 
-    model_scores = [model_scores[i] for i in range(len(model_scores))]
+    # model_scores = [model_scores[i] for i in range(len(model_scores))]
 
     return src, hyp, mt_scores, model_scores
 
