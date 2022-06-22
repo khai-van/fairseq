@@ -309,6 +309,8 @@ class IterativeRefinementGenerator(object):
                 ]
                 for i in range(len(finalized) // self.beam_size)
             ]
+            print("len:", len(finalized))
+            print(finalized)
 
         return finalized
 
