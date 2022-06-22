@@ -130,17 +130,8 @@ class GeneratorHubInterface(nn.Module):
             return self.sample([sentences], beam=beam, verbose=verbose, **kwargs)[0]
         tokenized_sentences = [self.encode(sentence) for sentence in sentences]
         batched_hypos = self.generate(tokenized_sentences, beam, verbose, **kwargs)
-        print("len batched_hypos:", len(batched_hypos))
-        print(batched_hypos)
-        res = []
 
-        for hypos in batched_hypos:
-            # if hypos[0]["history"] is not None:
-            #    res.append([(self.decode(item["tokens"]), hypos[0]["score"].cpu()) for item in hypos[0]["history"]])
-            # else:
-            res.append(self.decode(hypos[0]["tokens"]))
-
-        return res
+        return [(self.decode(hypos[0]["tokens"]), hypos[0]["score"]) for hypos in batched_hypos]
 
     def score(
         self, sentences: List[str], replace_newline_with_eos: bool = False, **kwargs
@@ -199,13 +190,10 @@ class GeneratorHubInterface(nn.Module):
             translations = self.task.inference_step(
                 generator, self.models, batch, **inference_step_args
             )
-            print("translations:", len(translations))
             for hypos in translations:
                 results.append((0, hypos))
-        print("results:", len(results))
         # sort output to match input order
         outputs = [hypos for _, hypos in sorted(results, key=lambda x: x[0])]
-        print("outputs:", len(outputs))
         if verbose:
 
             def getarg(name, default):
