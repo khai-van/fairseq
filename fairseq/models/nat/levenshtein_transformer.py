@@ -29,7 +29,7 @@ from .levenshtein_utils import (
 class LevenshteinTransformerModel(FairseqNATModel):
     @property
     def allow_length_beam(self):
-        return False
+        return True
 
     @staticmethod
     def add_args(parser):
