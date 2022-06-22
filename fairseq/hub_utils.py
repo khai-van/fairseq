@@ -199,10 +199,13 @@ class GeneratorHubInterface(nn.Module):
             translations = self.task.inference_step(
                 generator, self.models, batch, **inference_step_args
             )
+            print("translations:", len(translations))
             for hypos in translations:
                 results.append((0, hypos))
+        print("results:", len(results))
         # sort output to match input order
         outputs = [hypos for _, hypos in sorted(results, key=lambda x: x[0])]
+        print("outputs:", len(outputs))
         if verbose:
 
             def getarg(name, default):
