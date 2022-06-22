@@ -295,6 +295,8 @@ class IterativeRefinementGenerator(object):
                 )
 
             # aggregate information from length beam
+            print("len:", len(finalized))
+            print(finalized)
             finalized = [
                 finalized[
                     np.argmax(
