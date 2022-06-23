@@ -178,7 +178,7 @@ class GeneratorHubInterface(nn.Module):
             for k, v in kwargs.items():
                 setattr(gen_args, k, v)
 
-        print(self.task.__name__)
+        print(self.task)
         generator = self.task.build_generator(
             self.models,
             gen_args,
