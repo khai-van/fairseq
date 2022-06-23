@@ -130,7 +130,7 @@ class GeneratorHubInterface(nn.Module):
             return self.sample([sentences], beam=beam, verbose=verbose, **kwargs)[0]
         tokenized_sentences = [self.encode(sentence) for sentence in sentences]
         batched_hypos = self.generate(tokenized_sentences, beam, verbose, **kwargs)
-
+        print(batched_hypos)
         return [(self.decode(hypos[0]["tokens"]), hypos[0]["score"]) for hypos in batched_hypos]
 
     def score(
@@ -192,10 +192,12 @@ class GeneratorHubInterface(nn.Module):
             translations = self.task.inference_step(
                 generator, self.models, batch, **inference_step_args
             )
+            print((translations))
             for hypos in translations:
                 results.append((0, hypos))
         # sort output to match input order
         outputs = [hypos for _, hypos in sorted(results, key=lambda x: x[0])]
+        print(outputs)
         if verbose:
 
             def getarg(name, default):
@@ -230,6 +232,7 @@ class GeneratorHubInterface(nn.Module):
                                 )
                             )
                         )
+        print(outputs)
         return outputs
 
     def encode(self, sentence: str) -> torch.LongTensor:
