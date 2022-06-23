@@ -559,21 +559,16 @@ class SequenceGenerator(nn.Module):
             reorder_state = active_bbsz_idx
 
         # sort by score descending
-        print(finalized)
-        print(len(finalized))
+
         for sent in range(len(finalized)):
             scores = torch.tensor(
                 [float(elem["score"].item()) for elem in finalized[sent]]
             )
-            _, sorted_scores_indices = torch.sort(scores, descending=True)
-            print(len(finalized[sent]))
+
             finalized[sent] = [finalized[sent][ssi] for ssi in sorted_scores_indices]
             finalized[sent] = torch.jit.annotate(
                 List[Dict[str, Tensor]], finalized[sent]
             )
-            print(len(finalized[sent]))
-            print()
-        print(finalized)
 
         return finalized
 
@@ -944,11 +939,14 @@ class SequenceGeneratorWithAlignment(SequenceGenerator):
             attn = [i.to("cpu") for i in attn]
 
         # Process the attn matrix to extract hard alignments.
+        print(finalized)
+        print(bsz * beam_size)
         for i in range(bsz * beam_size):
             alignment = self.extract_alignment(
                 attn[i], src_tokens[i], tgt_tokens[i], self.pad, self.eos
             )
             finalized[i // beam_size][i % beam_size]["alignment"] = alignment
+        print(finalized)
         return finalized
 
     def _prepare_batch_for_alignment(self, sample, hypothesis):
