@@ -177,6 +177,8 @@ class GeneratorHubInterface(nn.Module):
             gen_args.beam = beam
             for k, v in kwargs.items():
                 setattr(gen_args, k, v)
+
+        print(self.task.__name__)
         generator = self.task.build_generator(
             self.models,
             gen_args,
