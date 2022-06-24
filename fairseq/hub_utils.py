@@ -74,7 +74,7 @@ def from_pretrained(
         [os.path.join(model_path, cpt) for cpt in checkpoint_file.split(os.pathsep)],
         arg_overrides=kwargs,
     )
-    print(models)
+
     return {
         "args": args,
         "task": task,
@@ -176,7 +176,6 @@ class GeneratorHubInterface(nn.Module):
             gen_args.beam = beam
             for k, v in kwargs.items():
                 setattr(gen_args, k, v)
-
         generator = self.task.build_generator(
             self.models,
             gen_args,
@@ -190,10 +189,12 @@ class GeneratorHubInterface(nn.Module):
             translations = self.task.inference_step(
                 generator, self.models, batch, **inference_step_args
             )
-            for hypos in translations:
-                results.append((0, hypos))
+            for id, hypos in zip(batch["id"].tolist(), translations):
+                results.append((id, hypos))
+
         # sort output to match input order
         outputs = [hypos for _, hypos in sorted(results, key=lambda x: x[0])]
+
         if verbose:
 
             def getarg(name, default):
