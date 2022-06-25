@@ -297,7 +297,7 @@ class IterativeRefinementGenerator(object):
 
             # aggregate information from length beam
             for i in range(len(finalized) // self.beam_size):
-                new_finalized.append(finalized[self.beam_size * i + j][0] for j in range(self.beam_size))
+                new_finalized.append([finalized[self.beam_size * i + j][0] for j in range(self.beam_size)])
 
             # finalized = [
             #     finalized[
