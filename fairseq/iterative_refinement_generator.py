@@ -299,7 +299,7 @@ class IterativeRefinementGenerator(object):
                 finalized[
                     np.argmax(
                         [
-                            finalized[self.beam_size * i + j][0]["score"].cpu()
+                            finalized[self.beam_size * i + j][0]["score"].cpu() if isinstance(finalized[self.beam_size * i + j][0]["score"], torch.Tensor) else finalized[self.beam_size * i + j][0]["score"]
                             for j in range(self.beam_size)
                         ]
                     )
