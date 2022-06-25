@@ -259,9 +259,9 @@ def _main(cfg: DictConfig, output_file):
                     print("T-{}\t{}".format(sample_id, target_str), file=output_file)
 
             # Process top predictions
-            print(hypos)
-            print(hypos[i])
-            print(cfg.generation.nbest)
+            # print(hypos)
+            # print(hypos[i])
+            # print(cfg.generation.nbest)
             for j, hypo in enumerate(hypos[i][: cfg.generation.nbest]):
                 hypo_tokens, hypo_str, alignment = utils.post_process_prediction(
                     hypo_tokens=hypo["tokens"].int().cpu(),
