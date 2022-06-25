@@ -61,7 +61,7 @@ class KLDivergenceRerankingCriterion(FairseqCriterion):
         print(sample_size)
         assert sample_size % self.task.cfg.mt_beam == 0, (
             f"sample_size ({sample_size}) cannot be divided by beam size ({self.task.cfg.mt_beam})."
-            f"Please set --required-batch-size-multiple={self.task.cfg.mt_beam}."
+            f"Please set --required-batch-size-multiple={self.task.cfg.mt_beam}. \n{sample}\n {sample['id']}"
         )
 
         # split into smaller batches for model forward
