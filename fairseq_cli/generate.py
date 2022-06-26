@@ -412,6 +412,10 @@ def cli_main():
         help="Model architecture. For constructing tasks that rely on "
         "model args (e.g. `AudioPretraining`)",
     )
+    parser.add_argument(
+        "--pretrained-model",
+        default=None
+    )
     args = options.parse_args_and_arch(parser)
     main(args)
 
