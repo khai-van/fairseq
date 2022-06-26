@@ -28,7 +28,6 @@ from .fairseq_model import (
     FairseqModel,
     FairseqMultiModel,
 )
-from .discriminative_reranking_model import DiscriminativeNMTReranker
 
 MODEL_REGISTRY = {}
 MODEL_DATACLASS_REGISTRY = {}
@@ -49,8 +48,7 @@ __all__ = [
     "FairseqIncrementalDecoder",
     "FairseqLanguageModel",
     "FairseqModel",
-    "FairseqMultiModel",
-    "DiscriminativeNMTReranker"
+    "FairseqMultiModel"
 ]
 
 
