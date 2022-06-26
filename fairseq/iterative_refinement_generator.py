@@ -287,7 +287,6 @@ class IterativeRefinementGenerator(object):
             )
             sent_idxs = sent_idxs[not_terminated]
             prev_output_tokens = prev_decoder_out.output_tokens.clone()
-        new_finalized = []
 
         if self.beam_size > 1:
             if reranker is not None:
@@ -296,23 +295,23 @@ class IterativeRefinementGenerator(object):
                 )
 
             # aggregate information from length beam
-            for i in range(len(finalized) // self.beam_size):
-                new_finalized.append([finalized[self.beam_size * i + j][0] for j in range(self.beam_size)])
+            # for i in range(len(finalized) // self.beam_size):
+            #     new_finalized.append([finalized[self.beam_size * i + j][0] for j in range(self.beam_size)])
 
-            # finalized = [
-            #     finalized[
-            #         np.argmax(
-            #             [
-            #                 finalized[self.beam_size * i + j][0]["score"].cpu() if isinstance(finalized[self.beam_size * i + j][0]["score"], torch.Tensor) else finalized[self.beam_size * i + j][0]["score"]
-            #                 for j in range(self.beam_size)
-            #             ]
-            #         )
-            #         + self.beam_size * i
-            #     ]
-            #     for i in range(len(finalized) // self.beam_size)
-            # ]
+            finalized = [
+                finalized[
+                    np.argmax(
+                        [
+                            finalized[self.beam_size * i + j][0]["score"].cpu() if isinstance(finalized[self.beam_size * i + j][0]["score"], torch.Tensor) else finalized[self.beam_size * i + j][0]["score"]
+                            for j in range(self.beam_size)
+                        ]
+                    )
+                    + self.beam_size * i
+                ]
+                for i in range(len(finalized) // self.beam_size)
+            ]
 
-        return new_finalized
+        return finalized
 
     def rerank(self, reranker, finalized, encoder_input, beam_size):
         def rebuild_batch(finalized):
