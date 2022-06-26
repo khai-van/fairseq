@@ -1,2 +1,0 @@
-from .discriminative_reranking_model import DiscriminativeNMTReranker
-
