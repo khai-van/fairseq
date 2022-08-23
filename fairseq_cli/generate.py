@@ -259,9 +259,6 @@ def _main(cfg: DictConfig, output_file):
                     print("T-{}\t{}".format(sample_id, target_str), file=output_file)
 
             # Process top predictions
-            # print(hypos)
-            # print(hypos[i])
-            # print(cfg.generation.nbest)
             for j, hypo in enumerate(hypos[i][: cfg.generation.nbest]):
                 hypo_tokens, hypo_str, alignment = utils.post_process_prediction(
                     hypo_tokens=hypo["tokens"].int().cpu(),
@@ -411,10 +408,6 @@ def cli_main():
         default="wav2vec2",
         help="Model architecture. For constructing tasks that rely on "
         "model args (e.g. `AudioPretraining`)",
-    )
-    parser.add_argument(
-        "--pretrained-model",
-        default=None
     )
     args = options.parse_args_and_arch(parser)
     main(args)

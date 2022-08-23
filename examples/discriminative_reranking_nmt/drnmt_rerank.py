@@ -7,6 +7,7 @@
 Score raw text with a trained model.
 """
 
+import argparse
 from collections import namedtuple
 import logging
 from multiprocessing import Pool
@@ -19,6 +20,7 @@ import sacrebleu
 import torch
 
 from fairseq import checkpoint_utils, options, utils
+import time
 
 
 logger = logging.getLogger("fairseq_cli.drnmt_rerank")
@@ -109,6 +111,56 @@ def make_batches(args, src, hyp, task, max_positions, encode_fn):
             src_lengths=batch["net_input"]["src_lengths"],
         )
 
+def create_generator(path_checkpoint, **kwargs,):
+    models, _args, task = checkpoint_utils.load_model_ensemble_and_task(
+        [path_checkpoint],arg_overrides=kwargs
+    )
+    model = models[0].cuda()
+    parser = argparse.ArgumentParser()
+    args = parser.parse_args()
+
+    generator = task.build_generator(args)
+    args.bpe = kwargs["bpe"]
+    args.sentencepiece_model = kwargs["sentencepiece_model"]
+    args.beam = kwargs["beam"]
+    args.max_tokens = kwargs["max_tokens"]
+    args.batch_size = kwargs["batch_size"]
+    args.skip_invalid_size_inputs_valid_test = kwargs["skip_invalid_size_inputs_valid_test"]
+
+    bpe = task.build_bpe(args)
+
+    return model, generator, bpe, task, args
+
+def decode_rerank_scores_custom(model, generator, bpe, task, src, hyp, mt_scores, args):
+    use_cuda = torch.cuda.is_available()
+    
+    def encode_fn(x):
+        return bpe.encode(x)
+
+    max_positions = utils.resolve_max_positions(
+        task.max_positions(), *[model.max_positions() for model in [model]]
+    )
+    model_scores = {}
+
+    for batch in make_batches(args, src, hyp, task, max_positions, encode_fn):
+        src_tokens = batch.src_tokens
+        src_lengths = batch.src_lengths
+        if use_cuda:
+            src_tokens = src_tokens.cuda()
+            src_lengths = src_lengths.cuda()
+
+        sample = {
+            "net_input": {"src_tokens": src_tokens, "src_lengths": src_lengths},
+        }
+        scores = task.inference_step(generator, [model], sample)
+
+        for id, sc in zip(batch.ids.tolist(), scores.tolist()):
+            model_scores[id] = sc[0]
+
+    model_scores = [model_scores[i] for i in range(len(model_scores))]
+
+    return src, hyp, mt_scores, model_scores
+
 
 def decode_rerank_scores(args):
     if args.max_tokens is None and args.batch_size is None:
@@ -120,6 +172,8 @@ def decode_rerank_scores(args):
 
     # Load ensemble
     logger.info("loading model(s) from {}".format(args.path))
+    print("args.model_overrides", args.model_overrides)
+
     models, _model_args, task = checkpoint_utils.load_model_ensemble_and_task(
         [args.path], arg_overrides=eval(args.model_overrides),
     )
@@ -143,11 +197,12 @@ def decode_rerank_scores(args):
         if bpe is not None:
             x = bpe.encode(x)
         return x
-
+    start = time.time()
     max_positions = utils.resolve_max_positions(
         task.max_positions(), *[model.max_positions() for model in models]
     )
-
+    end = time.time()
+    print(end - start)
     src, hyp, mt_scores = parse_fairseq_gen(args.in_text, task)
     model_scores = {}
     logger.info("decode reranker score")
@@ -166,7 +221,7 @@ def decode_rerank_scores(args):
         for id, sc in zip(batch.ids.tolist(), scores.tolist()):
             model_scores[id] = sc[0]
 
-    # model_scores = [model_scores[i] for i in range(len(model_scores))]
+    model_scores = [model_scores[i] for i in range(len(model_scores))]
 
     return src, hyp, mt_scores, model_scores
 

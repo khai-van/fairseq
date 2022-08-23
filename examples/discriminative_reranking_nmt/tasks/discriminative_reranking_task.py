@@ -34,6 +34,7 @@ from fairseq.dataclass import ChoiceEnum, FairseqDataclass
 from fairseq.tasks import FairseqTask, register_task
 from omegaconf import II, MISSING
 
+
 EVAL_BLEU_ORDER = 4
 TARGET_METRIC_CHOICES = ChoiceEnum(["bleu", "ter"])
 
@@ -89,7 +90,7 @@ class RerankerScorer(object):
 
         bs = net_input["src_tokens"].shape[0]
         assert (
-                model.joint_classification == "none" or bs % self.mt_beam == 0
+            model.joint_classification == "none" or bs % self.mt_beam == 0
         ), f"invalid batch size ({bs}) for joint classification with beam size ({self.mt_beam})"
 
         model.eval()
@@ -258,7 +259,7 @@ class DiscriminativeRerankingNMTTask(FairseqTask):
         )
 
         assert (
-                len(dataset) % self.cfg.mt_beam == 0
+            len(dataset) % self.cfg.mt_beam == 0
         ), "dataset size (%d) is not a multiple of beam size (%d)" % (
             len(dataset),
             self.cfg.mt_beam,
@@ -266,6 +267,7 @@ class DiscriminativeRerankingNMTTask(FairseqTask):
 
         # no need to shuffle valid/test sets
         if not self.cfg.no_shuffle and split == self.cfg.train_subset:
+
             # need to keep all hypothese together
             start_idx = np.arange(0, len(dataset), self.cfg.mt_beam)
             with data_utils.numpy_seed(self.cfg.seed + epoch):
@@ -372,7 +374,7 @@ class DiscriminativeRerankingNMTTask(FairseqTask):
         }
 
     def train_step(
-            self, sample, model, criterion, optimizer, update_num, ignore_grad=False
+        self, sample, model, criterion, optimizer, update_num, ignore_grad=False
     ):
         if ignore_grad and sample is None:
             sample = self.create_dummy_batch(model.device)
@@ -394,9 +396,9 @@ class DiscriminativeRerankingNMTTask(FairseqTask):
 
         if self.cfg.target_metric == "bleu":
             assert sample["target"].shape[1] == EVAL_BLEU_ORDER * 2 + 3, (
-                    "target does not contain enough information ("
-                    + str(sample["target"].shape[1])
-                    + "for evaluating BLEU"
+                "target does not contain enough information ("
+                + str(sample["target"].shape[1])
+                + "for evaluating BLEU"
             )
 
             max_id = torch.argmax(scores, dim=1)
@@ -412,13 +414,13 @@ class DiscriminativeRerankingNMTTask(FairseqTask):
                 logging_output["_bleu_counts_" + str(i)] = bleu_data[2 + i]
                 logging_output["_bleu_totals_" + str(i)] = bleu_data[
                     2 + EVAL_BLEU_ORDER + i
-                    ]
+                ]
 
         elif self.cfg.target_metric == "ter":
             assert sample["target"].shape[1] == 3, (
-                    "target does not contain enough information ("
-                    + str(sample["target"].shape[1])
-                    + "for evaluating TER"
+                "target does not contain enough information ("
+                + str(sample["target"].shape[1])
+                + "for evaluating TER"
             )
 
             max_id = torch.argmax(scores, dim=1)

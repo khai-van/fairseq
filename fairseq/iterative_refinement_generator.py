@@ -297,23 +297,25 @@ class IterativeRefinementGenerator(object):
             # aggregate information from length beam
             # for i in range(len(finalized) // self.beam_size):
             #     new_finalized.append([finalized[self.beam_size * i + j][0] for j in range(self.beam_size)])
-            new_finalized = []
-            for i in range(len(finalized) // self.beam_size):
-                new_finalized.append([finalized[self.beam_size * i + j][0] for j in range(self.beam_size)])
-            # finalized = [
-            #     finalized[
-            #         np.argmax(
-            #             [
-            #                 finalized[self.beam_size * i + j][0]["score"].cpu() if isinstance(finalized[self.beam_size * i + j][0]["score"], torch.Tensor) else finalized[self.beam_size * i + j][0]["score"]
-            #                 for j in range(self.beam_size)
-            #             ]
-            #         )
-            #         + self.beam_size * i
-            #     ]
-            #     for i in range(len(finalized) // self.beam_size)
-            # ]
-            finalized = new_finalized
-
+            # new_finalized = []
+            # for i in range(len(finalized) // self.beam_size):
+            #     new_finalized.append([finalized[self.beam_size * i + j][0] for j in range(self.beam_size)])
+            # finalized = new_finalized
+            finalized = [
+                # finalized[
+                #     np.argmax(
+                #         [
+                #             finalized[self.beam_size * i + j][0]["score"].cpu() if isinstance(finalized[self.beam_size * i + j][0]["score"], torch.Tensor) else finalized[self.beam_size * i + j][0]["score"]
+                #             for j in range(self.beam_size)
+                #         ]
+                #     )
+                #     + self.beam_size * i
+                # ]
+                [t[0] for t in finalized[
+                    (i*self.beam_size):((i+1) * self.beam_size)
+                ]]
+                for i in range(len(finalized) // self.beam_size)
+            ]
         return finalized
 
     def rerank(self, reranker, finalized, encoder_input, beam_size):

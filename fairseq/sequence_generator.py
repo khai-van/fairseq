@@ -935,15 +935,13 @@ class SequenceGeneratorWithAlignment(SequenceGenerator):
             src_tokens = src_tokens.to("cpu")
             tgt_tokens = tgt_tokens.to("cpu")
             attn = [i.to("cpu") for i in attn]
-        print(bsz * beam_size)
-        print(finalized)
+
         # Process the attn matrix to extract hard alignments.
         for i in range(bsz * beam_size):
             alignment = self.extract_alignment(
                 attn[i], src_tokens[i], tgt_tokens[i], self.pad, self.eos
             )
             finalized[i // beam_size][i % beam_size]["alignment"] = alignment
-        print(finalized)
         return finalized
 
     def _prepare_batch_for_alignment(self, sample, hypothesis):
