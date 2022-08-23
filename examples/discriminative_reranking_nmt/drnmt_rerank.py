@@ -126,6 +126,7 @@ def create_generator(path_checkpoint, **kwargs,):
     args.max_tokens = kwargs["max_tokens"]
     args.batch_size = kwargs["batch_size"]
     args.skip_invalid_size_inputs_valid_test = kwargs["skip_invalid_size_inputs_valid_test"]
+    args.pretrained_model = kwargs["pretrained_model"]
 
     bpe = task.build_bpe(args)
 
